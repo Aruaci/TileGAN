@@ -174,3 +174,5 @@ cython_debug/
 .pypirc
 
 /tile
+/checkpoints_cgan_tile
+/samples_cgan_tile
