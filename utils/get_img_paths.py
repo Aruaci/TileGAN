@@ -11,8 +11,8 @@ def get_img_paths(
     pattern = "*" + filending
     
     for c in categories:
-        path = "./tile/" + subfolder + "/" + c
-        search_path = os.path.join(path, pattern)
+        base_path = os.path.join(".", "tile", subfolder, c)
+        search_path = os.path.join(base_path, pattern)
         found_files = glob.glob(search_path)
         paths[c].extend(found_files)
 

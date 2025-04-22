@@ -6,6 +6,7 @@ import numpy as np
 from streamlit_drawable_canvas import st_canvas
 import io
 from utils.generator import UNetGenerator
+import os
 
 IMAGE_SIZE = 256
 NUM_CHANNELS = 3
@@ -15,7 +16,7 @@ NUM_CLASSES = len(DEFECT_MAP)
 EMBED_SIZE = 16
 NGF = 64
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-GENERATOR_CHECKPOINT_PATH = "./checkpoints_cgan_tile/cgan_generator_epoch_150.pth"
+GENERATOR_CHECKPOINT_PATH = os.path.join(".", "checkpoints_cgan_tile", "cgan_generator_epoch_150.pth")
 
 
 @st.cache_resource 
