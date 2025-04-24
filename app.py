@@ -7,14 +7,10 @@ from streamlit_drawable_canvas import st_canvas
 import io
 from utils.generator import UNetGenerator
 import os
+from configs import ANOMALY_TYPES_TO_TRAIN, EMBED_SIZE, IMG_SIZE, NUM_CHANNELS, NGF
 
-IMAGE_SIZE = 256
-NUM_CHANNELS = 3
-ANOMALY_TYPES_FOR_TRAINING = ["crack", "glue_strip"] # MUST match training
-DEFECT_MAP = {name: i for i, name in enumerate(ANOMALY_TYPES_FOR_TRAINING)}
+DEFECT_MAP = {name: i for i, name in enumerate(ANOMALY_TYPES_TO_TRAIN)}
 NUM_CLASSES = len(DEFECT_MAP)
-EMBED_SIZE = 16
-NGF = 64
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 GENERATOR_CHECKPOINT_PATH = os.path.join(".", "checkpoints_cgan_tile", "cgan_generator_epoch_150.pth")
 
@@ -38,12 +34,12 @@ def load_model(path, device):
 generator = load_model(GENERATOR_CHECKPOINT_PATH, DEVICE)
 
 transform_image = transforms.Compose([
-    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE), interpolation=transforms.InterpolationMode.BICUBIC),
+    transforms.Resize((IMG_SIZE, IMG_SIZE), interpolation=transforms.InterpolationMode.BICUBIC),
     transforms.ToTensor(),
     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
 ])
 transform_mask = transforms.Compose([
-    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE), interpolation=transforms.InterpolationMode.NEAREST),
+    transforms.Resize((IMG_SIZE, IMG_SIZE), interpolation=transforms.InterpolationMode.NEAREST),
     transforms.ToTensor()
 ])
 
@@ -51,7 +47,7 @@ st.title("Tile Defect Generation Demo")
 
 st.sidebar.header("Controls")
 uploaded_file = st.sidebar.file_uploader("Upload Good Tile Image:", type=["png", "jpg", "jpeg", "tif"])
-defect_type = st.sidebar.selectbox("Select Defect Type:", options=ANOMALY_TYPES_FOR_TRAINING)
+defect_type = st.sidebar.selectbox("Select Defect Type:", options=ANOMALY_TYPES_TO_TRAIN)
 
 drawing_mode = st.sidebar.selectbox("Drawing tool:", ("freedraw", "rect", "circle", "line", "transform"))
 stroke_width = st.sidebar.slider("Stroke width:", 1, 25, 5)
@@ -77,10 +73,10 @@ if image_pil:
         stroke_width=stroke_width,
         stroke_color=stroke_color,
         background_color=bg_color,
-        background_image=image_pil.resize((IMAGE_SIZE, IMAGE_SIZE)),
+        background_image=image_pil.resize((IMG_SIZE, IMG_SIZE)),
         update_streamlit=True,
-        height=IMAGE_SIZE,
-        width=IMAGE_SIZE,
+        height=IMG_SIZE,
+        width=IMG_SIZE,
         drawing_mode=drawing_mode,
         key="canvas",
     )
